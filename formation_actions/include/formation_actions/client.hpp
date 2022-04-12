@@ -14,10 +14,12 @@ public:
     DummyActionClient(ros::NodeHandle* nh);
     ~DummyActionClient() {};
 
+    //Action callback
     void result_cb(const actionlib::SimpleClientGoalState& state, const weez_u_msgs::GoToPointResultConstPtr& result);
     void feedback_cb(const weez_u_msgs::GoToPointFeedbackConstPtr& feeback);
     void active_cb();
 
+    //Topic Subscriber Callback
     void action_blocking_callback(const std_msgs::EmptyConstPtr& msg);
     void action_non_blocking_callback(const std_msgs::EmptyConstPtr& msg);
     void action_cancel(const std_msgs::EmptyConstPtr& msg);
