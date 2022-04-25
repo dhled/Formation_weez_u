@@ -1,12 +1,9 @@
-MyPoint point
-
-----
-
+weez_u_msgs/MyPoint point
+---
 int32 error_code
 int32 SUCCESSFUL = 0
 int32 FAILURE = -1
 string msg
-
-----
+---
 std_msgs/Header header
 string status

@@ -1,33 +1,35 @@
 #include "capteur_1/capteur.hpp"
 
+using namespace std::chrono_literals;
 
-CapteurPublisher::CapteurPublisher(ros::NodeHandle* nh, std::string msg_addon="Test"):
-    nh_(*nh)
+CapteurPublisher::CapteurPublisher(std::string msg_addon="Test") : Node("Capteur_Node")
 {
-    pub_default_capteur = nh_.advertise<std_msgs::String>("sensor_msg", 50); //Nom du topic / Taille du buffer de message
-    pub_point = nh_.advertise<weez_u_msgs::MyPoint>("point_msg", 50);
+    pub_default_capteur = this->create_publisher<std_msgs::msg::String>("topic", 10);
+    pub_point = this->create_publisher<weez_u_msgs::msg::MyPoint>("point_msg", 10);
     stored_add_on_msg = msg_addon;
     count = 0;
+    clock = std::make_shared<rclcpp::Clock>(RCL_ROS_TIME);
+    timer_ = this->create_wall_timer(1s, std::bind(&CapteurPublisher::timer_callback, this));
 
 }
 
-void CapteurPublisher::timer_callback(const ros::TimerEvent& event)
+void CapteurPublisher::timer_callback()
 {
-    std_msgs::String string_msg;
+    auto msg = std_msgs::msg::String();
     std::stringstream ss;
     ss << stored_add_on_msg << " - Message ID - " << count;
-    string_msg.data =  ss.str();
-    ROS_INFO("Publishing !");
-    pub_default_capteur.publish(string_msg);
+    msg.data =  ss.str();
+    RCLCPP_INFO(this->get_logger(), "Publishing !");
+    pub_default_capteur->publish(msg);
 
-    weez_u_msgs::MyPoint my_point;
-    my_point.header.stamp = ros::Time::now();
+    auto my_point = weez_u_msgs::msg::MyPoint();
+    my_point.header.stamp = clock->now();
     my_point.pose.position.x = 1.0;
     my_point.pose.position.y = -1.0;
     my_point.pose.position.z = 0.0;
     my_point.pose.orientation.w = 1.0;
     my_point.msg = ss.str();
-    pub_point.publish(my_point);
+    pub_point->publish(my_point);
     count++;
 
 }

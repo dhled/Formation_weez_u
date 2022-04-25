@@ -3,8 +3,7 @@
 
 int main(int argc, char *argv[])
 {
-    ros::init(argc, argv, "capteur_node");
-    ros::NodeHandle nh;
+    rclcpp::init(argc, argv);
     std::string arg_msg;
     if (argc > 1)
     {
@@ -14,8 +13,7 @@ int main(int argc, char *argv[])
     {
         arg_msg="No Argument - ";
     }
-    CapteurPublisher capteur_publisher(&nh, arg_msg);
-    ros::Timer timer = nh.createTimer(ros::Duration(0.1), &CapteurPublisher::timer_callback, &capteur_publisher);
-    ros::spin();
+    rclcpp::spin(std::make_shared<CapteurPublisher>(arg_msg));
+    rclcpp::shutdown();
     return 0;
 }

@@ -1,6 +1,4 @@
-MyPoint point
-
+weez_u_msgs/MyPoint point
 ---
-
 string result
 string msg

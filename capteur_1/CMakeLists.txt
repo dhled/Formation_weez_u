@@ -1,61 +1,29 @@
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 3.5)
 project(capteur_1)
 
-## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
+# Default to C++14
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 14)
+endif()
 
-## Find catkin macros and libraries
-## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
-## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  std_msgs
-  weez_u_msgs
-)
-catkin_package(
-  INCLUDE_DIRS include
-  CATKIN_DEPENDS roscpp weez_u_msgs std_msgs
-)
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
 
-###########
-## Build ##
-###########
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(weez_u_msgs REQUIRED)
 
 
-include_directories(
-  include
-  ${catkin_INCLUDE_DIRS}
-)
+include_directories(include)
 
 add_executable(capteur_node src/capteur_node.cpp src/capteur.cpp)
+ament_target_dependencies(capteur_node "rclcpp" "std_msgs" "weez_u_msgs")
 
-target_link_libraries(capteur_node
-  ${catkin_LIBRARIES}
-)
-
-add_executable(service_serveur_node src/service_serveur_node.cpp src/service_serveur.cpp)
-
-target_link_libraries(service_serveur_node
-  ${catkin_LIBRARIES}
-)
-
-
-
-#############
-## Install ##
-#############
-
-
-## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_executables.html
 install(TARGETS 
   capteur_node
-  service_serveur_node
-  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+  DESTINATION lib/${PROJECT_NAME}
 )
 
-## Mark cpp header files for installation
-install(DIRECTORY include/${PROJECT_NAME}/
-  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-  FILES_MATCHING PATTERN "*.hpp"
-  PATTERN ".svn" EXCLUDE
-)
+ament_package()
